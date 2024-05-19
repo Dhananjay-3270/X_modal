@@ -50,7 +50,7 @@ handeclose();
     <>
       <div className="first"  onClick={handeclose}>
         <h1>User Details Modal</h1>
-        <button onClick={(e) =>  {e.stopPropagation(),setopenform(true)}}>Open form</button>
+        <button onClick={(e) =>  {e.stopPropagation(),setopenform(true)}}>Open Form</button>
       </div>
       {
         openform &&
