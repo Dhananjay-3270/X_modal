@@ -52,7 +52,7 @@ function App() {
       <h1>User Details Modal</h1>
       <div className="modal">
         <div className="modal-content">
-          <button className="open-form-button" onClick={handleOpenModal}>
+          <button className="open-form-button" onClick={(e) =>{e.stopPropagation(),handleOpenModal()}}>
             Open Form
           </button>
           {isOpen && (
