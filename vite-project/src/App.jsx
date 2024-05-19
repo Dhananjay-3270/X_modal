@@ -1,104 +1,78 @@
-import  { useState } from "react";
+import { useState } from "react";
 import "./App.css";
 
 function App() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [dob, setDob] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [openform, setopenform] = useState(false);
+  const[error,seterror] = useState("")
+  const[formdata,setformdata] = useState({username:"",email:"",phone:"" ,dob:""})
+const handeclose = ()=>{
+  setopenform(false);
+  seterror("")
+}
+const handlechange = (e)=>{
+const {name,value} = e.target ;
+console.log(name,value);
+setformdata((prevdata)=>({...prevdata ,[name]:value}))
 
-  const handleOpenModal = () => {
-    setIsOpen(true);
-  };
+}
+const handleSubmit = (event)=>{
+  event.preventDefault()
+  if (!formdata.username || !formdata.email || !formdata.phone || !formdata.dob) {
+    seterror("Please fill out all fields.");
+    return;
+  }
+  if ( !formdata.email.includes("@")) {
+    seterror("Invalid email. Please check your email address.");
+    return;
+  }
+  if (!/^\d{10}$/.test(formdata.phone)) {
+    seterror(
+      "Invalid phone number. Please enter a 10-digit phone number."
+    );
+    return;
+  }
+  const currentDate = new Date();
+  const dobDate = new Date(formdata.dob);
 
-  const handleCloseModal = () => {
-    setIsOpen(false);
-    setErrorMsg("");
-  };
+if(dobDate>currentDate)
+  {
+    seterror("Invalid Date of Birth. Please enter a valid date.");
+    return;
+  }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!username || !email || !phone || !dob) {
-      setErrorMsg("Please fill out all fields.");
-      return;
-    }
-    if (!email.includes("@")) {
-      setErrorMsg("Invalid email. Please check your email address.");
-      return;
-    }
-    if (!/^\d{10}$/.test(phone)) {
-      setErrorMsg(
-        "Invalid phone number. Please enter a 10-digit phone number."
-      );
-      return;
-    }
-    const dobDate = new Date(dob);
-    const currentDate = new Date();
-    if (dobDate > currentDate) {
-      setErrorMsg("Invalid Date of Birth. Please enter a valid date.");
-      return;
-    }
-    setUsername("");
-    setEmail("");
-    setPhone("");
-    setDob("");
-    handleCloseModal();
-  };
+  setformdata({username:"",email:"",phone:"" ,dob:""})
 
+
+handeclose();
+  
+}
   return (
     <>
-      <h1>User Details Modal</h1>
-      <div className="modal">
+      <div className="first"  onClick={handeclose}>
+        <h1>User Details Modal</h1>
+        <button onClick={(e) =>  {e.stopPropagation(),setopenform(true)}}>Open form</button>
+      </div>
+      {
+        openform &&
+      <div className="modal" onClick={handeclose}>
         <div className="modal-content">
-          <button className="open-form-button" onClick={(e) =>{e.stopPropagation(),handleOpenModal()}}>
-            Open Form
-          </button>
-          {isOpen && (
-            <div className="form-container" onClick={handleCloseModal}>
-              <form
-                className="form"
-                onClick={(e) => e.stopPropagation()}
-                onSubmit={handleSubmit}
-              >
-                <label htmlFor="username">Username:</label>
-                <input
-                  type="text"
-                  id="username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-                <label htmlFor="email">Email:</label>
-                <input
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <label htmlFor="phone">Phone:</label>
-                <input
-                  type="tel"
-                  id="phone"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                />
-                <label htmlFor="dob">Date of Birth:</label>
-                <input
-                  type="date"
-                  id="dob"
-                  value={dob}
-                  onChange={(e) => setDob(e.target.value)}
-                />
-                <button type="submit" className="submit-button">
-                  Submit
-                </button>
-                {errorMsg && <p className="error-msg">{errorMsg}</p>}
-              </form>
-            </div>
-          )}
+          <form className="form"   onSubmit={handleSubmit}   onClick={(e) =>  e.stopPropagation()}>
+            <label htmlFor="username">Username:</label>
+            <input name="username" onChange={handlechange} type="text" id="username" />
+            <label  htmlFor="email">Email:</label>
+            <input onChange={handlechange}  name="email" type="email" id="email" />
+            <label htmlFor="phone">Phone:</label>
+            <input onChange={handlechange}  name="phone"  type="tel" id="phone" />
+            <label htmlFor="dob">Date of Birth:</label>
+            <input onChange={handlechange}  name="dob" type="date" id="dob" />
+            <button onChange={handlechange}  type="submit" className="submit-button">
+              Submit
+            </button>
+            {error && <p className="error-msg">{error}</p>}
+          </form>
         </div>
       </div>
+}
     </>
   );
 }
